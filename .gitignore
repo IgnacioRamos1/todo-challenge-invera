@@ -1,2 +1,6 @@
 .env
-__pycache__/
+todo-challenge-invera/authorization/__pycache__/
+todo-challenge-invera/authorization/migrations/__pycache__/
+todo-challenge-invera/tasks/__pycache__/
+todo-challenge-invera/tasks/migrations/__pycache__/
+todo-challenge-invera/todolist/__pycache__/

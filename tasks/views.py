@@ -7,7 +7,6 @@ from .models import Task
 class TaskDetailAPIView(
     # StaffEditorPermissionMixin,
     generics.ListAPIView,
-    generics.CreateAPIView,
         ):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
