@@ -4,24 +4,17 @@ from .serializers import TaskSerializer
 from .models import Task
 
 
-class TaskDetailAPIView(
+class TaskAPIView(
     # StaffEditorPermissionMixin,
-    generics.ListAPIView,
+    generics.ListCreateAPIView,
         ):
-    queryset = Task.objects.all()
     serializer_class = TaskSerializer
 
-task_list_view = TaskDetailAPIView.as_view()
-
-
-class TaskCreateAPIView(
-    # StaffEditorPermissionMixin,
-    generics.CreateAPIView,
-        ):
-    queryset = Task.objects.all()
-    serializer_class = TaskSerializer
+    def get_queryset(self):
+        queryset = Task.objects.all()
+        return queryset
 
     def perform_create(self, serializer):
         serializer.save()
 
-task_create_view = TaskCreateAPIView.as_view()
+task_list_view = TaskAPIView.as_view()
