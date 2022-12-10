@@ -1,15 +1,17 @@
-from rest_framework import generics
+from rest_framework import generics, filters
 
 from .serializers import TaskSerializer
 from .models import Task
 from .mixins import UpdateDestroyAPIView
 
 
-class TaskListCreateAPIView(
+class TaskSearchListCreateAPIView(
     # StaffEditorPermissionMixin,
     generics.ListCreateAPIView,
         ):
     serializer_class = TaskSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['title', 'description', 'expiration_date', 'complete']
 
     def get_queryset(self):
         queryset = Task.objects.all()
@@ -18,7 +20,7 @@ class TaskListCreateAPIView(
     def perform_create(self, serializer):
         serializer.save()
 
-task_list_create_view = TaskListCreateAPIView.as_view()
+task_search_list_create_view = TaskSearchListCreateAPIView.as_view()
 
 
 class TaskUpdateDeleteAPIView(
