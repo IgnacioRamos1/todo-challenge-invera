@@ -3,6 +3,10 @@ from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.contrib.auth.models import PermissionsMixin, AbstractBaseUser, UserManager
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+import jwt
+from datetime import datetime, timedelta
+
+from django.conf import settings
 
 
 # Create your models here.
@@ -77,4 +81,11 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     @property
     def token(self):
-        return ''
+        token = jwt.encode(
+            {
+                'email': self.email,
+                'exp':datetime.utcnow() + timedelta(hours=2)
+                }, 
+            settings.SECRET_KEY, algorithm='HS256'
+            )
+        return token
