@@ -10,7 +10,7 @@ class UserTestCase(TestCase):
         user = User(
             username = 'testing_login@testing.com',
         )
-        user.set_password('testing')
+        user.set_password('testing123')
         user.save()
 
     def test_user_registration(self):
@@ -25,3 +25,18 @@ class UserTestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data['message'], 'User Created Successfully.  Now perform Login to get your token')
         self.assertEqual(response.data['user']['username'], 'testing@testing.com')
+
+    def test_user_login(self):
+        client = APIClient()
+        response = client.post(
+            '/login/', {
+                "username": "testing_login@testing.com",
+                "password": "testing123"
+            },
+            format='json'
+        )
+        result = json.loads(response.content)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('access', result)
+        self.assertIn('refresh', result)
+
