@@ -40,13 +40,13 @@ class LogoutView(APIView):
             token: OutstandingToken
             for token in OutstandingToken.objects.filter(user=request.user):
                 _, _ = BlacklistedToken.objects.get_or_create(token=token)
-            return Response({"status": "OK, goodbye, all refresh tokens blacklisted"})
+            return Response({"status": "OK, goodbye, all refresh tokens blacklisted"}, status=200)
         refresh_token = self.request.data.get('refresh_token')
         token = RefreshToken(token=refresh_token)
         token.blacklist()
 
         logger.info(f'User {request.user.username} logged out successfully.')
 
-        return Response({"status": "OK, goodbye"})
+        return Response({"status": "OK, goodbye"}, status=200)
 
 user_logout = LogoutView.as_view()
