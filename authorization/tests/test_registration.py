@@ -49,3 +49,26 @@ class UserRegistrationTestCase(TestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data['errors']['password'], ['Ensure this field has at least 8 characters.'])
+
+    def test_no_username_registration(self):
+        client = APIClient()
+        response = client.post(
+            '/register/', {
+                "password": "testing123"
+            },
+            format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data['errors']['username'], ['This field is required.'])
+
+    def test_no_password_registration(self):
+        client = APIClient()
+        response = client.post(
+            '/register/', {
+                "username": "testing@testing.com",
+            },
+            format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data['errors']['password'], ['This field is required.'])
+
