@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'tasks',
     'authorization',
     'log_visualizer',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
