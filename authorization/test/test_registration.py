@@ -7,11 +7,7 @@ import json
 
 class UserRegistrationTestCase(TestCase):
     def setUp(self):
-        user = User(
-            username = 'testing_login@testing.com',
-        )
-        user.set_password('testing123')
-        user.save()
+        pass
 
     def test_user_registration(self):
         client = APIClient()
