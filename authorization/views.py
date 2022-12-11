@@ -24,10 +24,10 @@ class RegistrationAPIView(generics.GenericAPIView):
             return Response({
                 "user": RegistrationSerializer(user, context=self.get_serializer_context()).data,
                 "message": "User Created Successfully.  Now perform Login to get your token",
-            })
+            }, status=201)
 
         logger.error(f'User could not be created. {serializer.errors}')
-        return Response({'message': 'Something went wrong', 'errors': serializer.errors})
+        return Response({'message': 'Something went wrong', 'errors': serializer.errors}, status=400)
 
 user_registration = RegistrationAPIView.as_view()
 
