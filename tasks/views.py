@@ -4,11 +4,14 @@ from .serializers import TaskSerializer
 from .models import Task
 from .mixins import UpdateDestroyAPIView
 
+from rest_framework.permissions import IsAuthenticated
 
 class TaskSearchListCreateAPIView(
-    # StaffEditorPermissionMixin,
     generics.ListCreateAPIView,
         ):
+
+    permission_classes = [IsAuthenticated]
+
     serializer_class = TaskSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ['title', 'description', 'expiration_date', 'complete']
@@ -28,6 +31,9 @@ class TaskUpdateDeleteAPIView(
     UpdateDestroyAPIView,
     generics.GenericAPIView,
         ):
+
+    permission_classes = [IsAuthenticated]
+
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
     lookup_field = 'id'
