@@ -98,3 +98,20 @@ class CreateTaskTestCase(TestCase):
         )
         self.assertEqual(response_create_task.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response_create_task.data['title'][0], 'This field is required.')
+
+    def test_create_task_with_too_long_title(self):
+        client = self.client_login
+
+        response_create_task = client.post(
+            '/tasks/', {
+                "title": "testing_create_task_testing_create_task_testing_create_task_testing_create_task_testing_create_task_testing_create_task_testing_create_task_testing_create_task_testing_create_task_testing_create_task__",
+                "description": "testing_create_task",
+                "complete": False,
+                "expiration_date": "2020-12-12 12:12:12"
+            },
+            format='json'
+        )
+        self.assertEqual(response_create_task.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response_create_task.data['title'][0], 'Title is too long.')
+
+
