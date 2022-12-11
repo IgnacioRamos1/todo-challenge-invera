@@ -7,17 +7,16 @@ from django.contrib.auth.models import User
 
 import json
 
-class GetTaskTestCase(TestCase):
+class CreateTaskTestCase(TestCase):
     def setUp(self):    
         user = User(
             username = 'testing_login@testing.com',
         )
         user.set_password('testing123')
         user.save()
-    
-    def test_create_task(self):
-        client = APIClient()
-        response_login = client.post(
+
+        self.client_login = APIClient()
+        response_login = self.client_login.post(
             '/login/', {
                 "username": "testing_login@testing.com",
                 "password": "testing123"
@@ -25,8 +24,11 @@ class GetTaskTestCase(TestCase):
             format='json'
         )
         result = json.loads(response_login.content)
-        
-        client.credentials(HTTP_AUTHORIZATION='Bearer ' + result['access'])
+
+        self.client_login.credentials(HTTP_AUTHORIZATION='Bearer ' + result['access'])
+    
+    def test_create_task(self):
+        client = self.client_login
 
         response_create_task = client.post(
             '/tasks/', {
@@ -51,7 +53,10 @@ class GetTaskTestCase(TestCase):
         self.assertEqual(response_get_task.data[0]['expiration_date'], '2020-12-12T12:12:12Z')
 
     def test_create_task_without_token(self):
-        client = APIClient()
+        client = self.client_login
+
+        client.credentials()
+
         response_create_task = client.post(
             '/tasks/', {
                 "title": "testing_create_task",
@@ -65,7 +70,8 @@ class GetTaskTestCase(TestCase):
         self.assertEqual(response_create_task.data['detail'], 'Authentication credentials were not provided.')
     
     def test_create_task_with_invalid_token(self):
-        client = APIClient()
+        client = self.client_login
+
         client.credentials(HTTP_AUTHORIZATION='Bearer ' + 'invalid_token')
         response_create_task = client.post(
             '/tasks/', {
@@ -80,17 +86,7 @@ class GetTaskTestCase(TestCase):
         self.assertEqual(response_create_task.data['detail'], 'Given token not valid for any token type')
 
     def test_create_task_with_no_title(self):
-        client = APIClient()
-        response_login = client.post(
-            '/login/', {
-                "username": "testing_login@testing.com",
-                "password": "testing123"
-            },
-            format='json'
-        )
-        result = json.loads(response_login.content)
-        
-        client.credentials(HTTP_AUTHORIZATION='Bearer ' + result['access'])
+        client = self.client_login
 
         response_create_task = client.post(
             '/tasks/', {

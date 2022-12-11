@@ -5,7 +5,6 @@ from .models import Task
 from .mixins import UpdateDestroyAPIView
 
 from rest_framework.permissions import IsAuthenticated
-
 import logging
 
 logger = logging.getLogger('main')
@@ -22,7 +21,6 @@ class TaskSearchListCreateAPIView(
 
     def get_queryset(self):
         queryset = Task.objects.all()
-
         logger.info(f'User {self.request.user.username} got tasks successfully.')
         return queryset
 
@@ -34,7 +32,6 @@ task_search_list_create_view = TaskSearchListCreateAPIView.as_view()
 
 
 class TaskUpdateDeleteAPIView(
-    # StaffEditorPermissionMixin,
     UpdateDestroyAPIView,
     generics.GenericAPIView,
         ):

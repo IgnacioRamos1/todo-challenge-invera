@@ -13,18 +13,21 @@ class UserTestCase(TestCase):
         user.set_password('testing123')
         user.save()
 
-    def test_user_logout(self):
-        client = APIClient()
-        response_login = client.post(
+        self.client_login = APIClient()
+        response_login = self.client_login.post(
             '/login/', {
                 "username": "testing_login@testing.com",
                 "password": "testing123"
             },
             format='json'
         )
-        result = json.loads(response_login.content)
-        
-        client.credentials(HTTP_AUTHORIZATION='Bearer ' + result['access'])
+        self.result = json.loads(response_login.content)
+
+        self.client_login.credentials(HTTP_AUTHORIZATION='Bearer ' + self.result['access'])
+
+    def test_user_logout(self):
+        client = self.client_login
+        result = self.result
 
         response_logout = client.post(
             '/logout/', {
@@ -36,15 +39,8 @@ class UserTestCase(TestCase):
         self.assertEqual(response_logout.data['status'], 'OK, goodbye')
     
     def test_user_logout_without_refresh_token(self):
-        client = APIClient()
-        response_login = client.post(
-            '/login/', {
-                "username": "testing_login@testing.com",
-                "password": "testing123"
-            },
-            format='json'
-        )
-        result = json.loads(response_login.content)
+        client = self.client_login
+        result = self.result
 
         client.credentials(HTTP_AUTHORIZATION='Bearer ' + result['access'])
 
@@ -56,17 +52,11 @@ class UserTestCase(TestCase):
         self.assertEqual(response_logout.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response_logout.data['detail'], 'Refresh token is required')
 
-    
     def test_user_logout_without_token(self):
-        client = APIClient()
-        response_login = client.post(
-            '/login/', {
-                "username": "testing_login@testing.com",
-                "password": "testing123"
-            },
-            format='json'
-        )
-        result = json.loads(response_login.content)
+        client = self.client_login
+        result = self.result
+
+        client.credentials()
 
         response_logout = client.post(
             '/logout/', {
@@ -78,17 +68,7 @@ class UserTestCase(TestCase):
         self.assertEqual(response_logout.data['detail'], 'Authentication credentials were not provided.')
 
     def test_user_logout_with_all(self):
-        client = APIClient()
-        response_login = client.post(
-            '/login/', {
-                "username": "testing_login@testing.com",
-                "password": "testing123"
-            },
-            format='json'
-        )
-        result = json.loads(response_login.content)
-
-        client.credentials(HTTP_AUTHORIZATION='Bearer ' + result['access'])
+        client = self.client_login
 
         response_logout = client.post(
             '/logout/', {
@@ -100,17 +80,8 @@ class UserTestCase(TestCase):
         self.assertEqual(response_logout.data['status'], 'OK, goodbye, all refresh tokens blacklisted')
 
     def test_user_logout_get_new_token(self):
-        client = APIClient()
-        response_login = client.post(
-            '/login/', {
-                "username": "testing_login@testing.com",
-                "password": "testing123"
-            },
-            format='json'
-        )
-        result = json.loads(response_login.content)
-        
-        client.credentials(HTTP_AUTHORIZATION='Bearer ' + result['access'])
+        client = self.client_login
+        result = self.result
 
         response_logout = client.post(
             '/logout/', {
