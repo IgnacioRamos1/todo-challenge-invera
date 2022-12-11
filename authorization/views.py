@@ -6,6 +6,10 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
 from rest_framework_simplejwt.tokens import RefreshToken
 
+import logging
+
+logger = logging.getLogger('main')
+
 
 class RegistrationAPIView(generics.GenericAPIView):
     serializer_class = RegistrationSerializer
@@ -14,10 +18,15 @@ class RegistrationAPIView(generics.GenericAPIView):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
+
+            logger.info(f'User {user.username} created successfully.')
+
             return Response({
                 "user": RegistrationSerializer(user, context=self.get_serializer_context()).data,
                 "message": "User Created Successfully.  Now perform Login to get your token",
             })
+
+        logger.error(f'User could not be created. {serializer.errors}')
         return Response({'message': 'Something went wrong', 'errors': serializer.errors})
 
 user_registration = RegistrationAPIView.as_view()
@@ -35,6 +44,9 @@ class LogoutView(APIView):
         refresh_token = self.request.data.get('refresh_token')
         token = RefreshToken(token=refresh_token)
         token.blacklist()
+
+        logger.info(f'User {request.user.username} logged out successfully.')
+
         return Response({"status": "OK, goodbye"})
 
 user_logout = LogoutView.as_view()

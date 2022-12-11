@@ -1,0 +1,3 @@
+ERROR 2022-12-11 03:22:02,721 views User None could not be created.
+ERROR 2022-12-11 03:24:10,438 views User could not be created. {'email': [ErrorDetail(string='This field is required.', code='required')]}
+ERROR 2022-12-11 03:25:30,578 views User could not be created. {'email': [ErrorDetail(string='This field is required.', code='required')]}
