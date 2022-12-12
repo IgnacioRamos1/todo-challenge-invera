@@ -2,6 +2,8 @@ from rest_framework import status
 from rest_framework.test import APIClient
 from django.test import TestCase
 from django.contrib.auth.models import User
+from django.utils import timezone
+
 import json
 
 
@@ -27,15 +29,17 @@ class CreateTaskTestCase(TestCase):
             HTTP_AUTHORIZATION='Bearer ' + result['access']
             )
 
+        self.date = timezone.now().strftime("%Y-%m-%dT%H:%M:%SZ")
+
     def test_create_task(self):
         client = self.client_login
-
+        
         response_create_task = client.post(
             '/tasks/', {
                 "title": "testing_create_task",
                 "description": "testing_create_task",
                 "complete": False,
-                "expiration_date": "2020-12-12 12:12:12"
+                "expiration_date": self.date
             },
             format='json'
         )
@@ -45,7 +49,6 @@ class CreateTaskTestCase(TestCase):
             },
             format='json'
         )
-
         self.assertEqual(
             response_create_task.status_code,
             status.HTTP_201_CREATED
@@ -61,7 +64,7 @@ class CreateTaskTestCase(TestCase):
         self.assertEqual(response_get_task.data[0]['complete'], False)
         self.assertEqual(
             response_get_task.data[0]['expiration_date'],
-            '2020-12-12T12:12:12Z'
+            self.date
             )
 
     def test_create_task_without_token(self):
@@ -74,7 +77,7 @@ class CreateTaskTestCase(TestCase):
                 "title": "testing_create_task",
                 "description": "testing_create_task",
                 "complete": False,
-                "expiration_date": "2020-12-12 12:12:12"
+                "expiration_date": self.date
             },
             format='json'
         )
@@ -96,7 +99,7 @@ class CreateTaskTestCase(TestCase):
                 "title": "testing_create_task",
                 "description": "testing_create_task",
                 "complete": False,
-                "expiration_date": "2020-12-12 12:12:12"
+                "expiration_date": self.date
             },
             format='json'
         )
@@ -116,7 +119,7 @@ class CreateTaskTestCase(TestCase):
             '/tasks/', {
                 "description": "testing_create_task",
                 "complete": False,
-                "expiration_date": "2020-12-12 12:12:12"
+                "expiration_date": self.date
             },
             format='json'
         )
@@ -136,7 +139,7 @@ class CreateTaskTestCase(TestCase):
                 "title": "testing_create_task_testing_create_task_testing_create_task_testing_create_task_testing_create_task_testing_create_task_testing_create_task_testing_create_task_testing_create_task_testing_create_task__",
                 "description": "testing_create_task",
                 "complete": False,
-                "expiration_date": "2020-12-12 12:12:12"
+                "expiration_date": self.date
             },
             format='json'
         )

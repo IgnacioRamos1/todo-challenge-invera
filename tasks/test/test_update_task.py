@@ -2,6 +2,7 @@ from rest_framework import status
 from rest_framework.test import APIClient
 from django.test import TestCase
 from django.contrib.auth.models import User
+from django.utils import timezone
 import json
 
 from tasks.models import Task
@@ -14,7 +15,7 @@ class UpdateTaskTestCase(TestCase):
             title='testing_get_task',
             description='testing_get_task',
             complete=False,
-            expiration_date='2020-12-12 12:12:12'
+            expiration_date=timezone.now()
         )
         task.save()
 
@@ -37,6 +38,8 @@ class UpdateTaskTestCase(TestCase):
         self.client_login.credentials(
             HTTP_AUTHORIZATION='Bearer ' + result['access']
             )
+        
+        self.date = timezone.now().strftime("%Y-%m-%dT%H:%M:%SZ")
 
     def test_update_task(self):
         client = self.client_login
@@ -46,7 +49,7 @@ class UpdateTaskTestCase(TestCase):
                 "title": "testing_update_task",
                 "description": "testing_update_task",
                 "complete": True,
-                "expiration_date": "2020-12-12 12:12:12"
+                "expiration_date": self.date
             },
             format='json'
         )
@@ -69,7 +72,7 @@ class UpdateTaskTestCase(TestCase):
         self.assertEqual(response_get_task.data[0]['complete'], True)
         self.assertEqual(
             response_get_task.data[0]['expiration_date'],
-            '2020-12-12T12:12:12Z'
+            self.date
             )
 
     def test_update_task_not_found(self):
@@ -80,7 +83,7 @@ class UpdateTaskTestCase(TestCase):
                 "title": "testing_update_task",
                 "description": "testing_update_task",
                 "complete": True,
-                "expiration_date": "2020-12-12 12:12:12"
+                "expiration_date": self.date
             },
             format='json'
         )
@@ -100,7 +103,7 @@ class UpdateTaskTestCase(TestCase):
                 "title": "testing_update_task",
                 "description": "testing_update_task",
                 "complete": True,
-                "expiration_date": "2020-12-12 12:12:12"
+                "expiration_date": self.date
             },
             format='json'
         )
@@ -120,7 +123,7 @@ class UpdateTaskTestCase(TestCase):
                 "title": "testing_update_task",
                 "description": "testing_update_task",
                 "complete": True,
-                "expiration_date": "2020-12-12 12:12:12"
+                "expiration_date": self.date
             },
             format='json'
         )

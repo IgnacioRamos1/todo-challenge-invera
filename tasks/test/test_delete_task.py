@@ -2,6 +2,7 @@ from rest_framework import status
 from rest_framework.test import APIClient
 from django.test import TestCase
 from django.contrib.auth.models import User
+from django.utils import timezone
 import json
 
 from tasks.models import Task
@@ -9,12 +10,14 @@ from tasks.models import Task
 
 class DeleteTaskTestCase(TestCase):
     def setUp(self):
+        date = timezone.now().strftime("%Y-%m-%dT%H:%M:%SZ")
+
         task = Task(
             id=1,
             title='testing_get_task',
             description='testing_get_task',
             complete=False,
-            expiration_date='2020-12-12 12:12:12'
+            expiration_date=date
         )
         task.save()
 
