@@ -29,7 +29,7 @@ class RegistrationAPIView(generics.GenericAPIView):
                 "user": RegistrationSerializer(
                     user,
                     context=self.get_serializer_context()
-                    ).data,
+                    ).data['username'],
                 "message": "User Created Successfully.  Now perform Login to get your token",
             }, status=201)
 

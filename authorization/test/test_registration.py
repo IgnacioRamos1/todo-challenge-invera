@@ -22,7 +22,7 @@ class UserRegistrationTestCase(TestCase):
             'User Created Successfully.  Now perform Login to get your token'
             )
         self.assertEqual(
-            response.data['user']['username'],
+            response.data['user'],
             'testing@testing.com'
             )
 
