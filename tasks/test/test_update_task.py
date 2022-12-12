@@ -1,29 +1,29 @@
-from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APIClient
+from django.test import TestCase
+from django.contrib.auth.models import User
+import json
+
 from tasks.models import Task
 
-from django.contrib.auth.models import User
-
-import json
 
 class UpdateTaskTestCase(TestCase):
     def setUp(self):
         task = Task(
-            id = 1,
-            title = 'testing_get_task',
-            description = 'testing_get_task',
-            complete = False,
-            expiration_date = '2020-12-12 12:12:12'
+            id=1,
+            title='testing_get_task',
+            description='testing_get_task',
+            complete=False,
+            expiration_date='2020-12-12 12:12:12'
         )
         task.save()
-    
+
         user = User(
-            username = 'testing_login@testing.com',
+            username='testing_login@testing.com',
         )
         user.set_password('testing123')
         user.save()
-        
+
         self.client_login = APIClient()
         response_login = self.client_login.post(
             '/login/', {
@@ -34,8 +34,10 @@ class UpdateTaskTestCase(TestCase):
         )
         result = json.loads(response_login.content)
 
-        self.client_login.credentials(HTTP_AUTHORIZATION='Bearer ' + result['access'])
-    
+        self.client_login.credentials(
+            HTTP_AUTHORIZATION='Bearer ' + result['access']
+            )
+
     def test_update_task(self):
         client = self.client_login
 
@@ -56,10 +58,19 @@ class UpdateTaskTestCase(TestCase):
         )
 
         self.assertEqual(response_update_task.status_code, status.HTTP_200_OK)
-        self.assertEqual(response_get_task.data[0]['title'], 'testing_update_task')
-        self.assertEqual(response_get_task.data[0]['description'], 'testing_update_task')
+        self.assertEqual(
+            response_get_task.data[0]['title'],
+            'testing_update_task'
+            )
+        self.assertEqual(
+            response_get_task.data[0]['description'],
+            'testing_update_task'
+            )
         self.assertEqual(response_get_task.data[0]['complete'], True)
-        self.assertEqual(response_get_task.data[0]['expiration_date'], '2020-12-12T12:12:12Z')
+        self.assertEqual(
+            response_get_task.data[0]['expiration_date'],
+            '2020-12-12T12:12:12Z'
+            )
 
     def test_update_task_not_found(self):
         client = self.client_login
@@ -74,8 +85,11 @@ class UpdateTaskTestCase(TestCase):
             format='json'
         )
 
-        self.assertEqual(response_update_task.status_code, status.HTTP_404_NOT_FOUND)
-    
+        self.assertEqual(
+            response_update_task.status_code,
+            status.HTTP_404_NOT_FOUND
+            )
+
     def test_update_task_without_token(self):
         client = self.client_login
 
@@ -91,7 +105,10 @@ class UpdateTaskTestCase(TestCase):
             format='json'
         )
 
-        self.assertEqual(response_update_task.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(
+            response_update_task.status_code,
+            status.HTTP_401_UNAUTHORIZED
+            )
 
     def test_update_task_with_invalid_token(self):
         client = self.client_login
@@ -108,4 +125,7 @@ class UpdateTaskTestCase(TestCase):
             format='json'
         )
 
-        self.assertEqual(response_update_task.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(
+            response_update_task.status_code,
+            status.HTTP_401_UNAUTHORIZED
+            )

@@ -1,4 +1,5 @@
 from django.urls import path
+
 from . import views
 
 urlpatterns = [
@@ -8,4 +9,3 @@ urlpatterns = [
     path('info/', views.info_log_view, name='info_log_view'),
     path('debug/', views.debug_log_view, name='debug_log_view'),
 ]
-

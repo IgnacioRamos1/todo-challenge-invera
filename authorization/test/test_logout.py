@@ -1,6 +1,6 @@
-from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APIClient
+from django.test import TestCase
 from django.contrib.auth.models import User
 import json
 
@@ -8,7 +8,7 @@ import json
 class UserTestCase(TestCase):
     def setUp(self):
         user = User(
-            username = 'testing_login@testing.com',
+            username='testing_login@testing.com',
         )
         user.set_password('testing123')
         user.save()
@@ -23,7 +23,9 @@ class UserTestCase(TestCase):
         )
         self.result = json.loads(response_login.content)
 
-        self.client_login.credentials(HTTP_AUTHORIZATION='Bearer ' + self.result['access'])
+        self.client_login.credentials(
+            HTTP_AUTHORIZATION='Bearer ' + self.result['access']
+            )
 
     def test_user_logout(self):
         client = self.client_login
@@ -37,7 +39,7 @@ class UserTestCase(TestCase):
         )
         self.assertEqual(response_logout.status_code, status.HTTP_200_OK)
         self.assertEqual(response_logout.data['status'], 'OK, goodbye')
-    
+
     def test_user_logout_without_refresh_token(self):
         client = self.client_login
         result = self.result
@@ -49,8 +51,14 @@ class UserTestCase(TestCase):
             },
             format='json'
         )
-        self.assertEqual(response_logout.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response_logout.data['detail'], 'Refresh token is required')
+        self.assertEqual(
+            response_logout.status_code,
+            status.HTTP_400_BAD_REQUEST
+            )
+        self.assertEqual(
+            response_logout.data['detail'],
+            'Refresh token is required'
+            )
 
     def test_user_logout_without_token(self):
         client = self.client_login
@@ -64,8 +72,14 @@ class UserTestCase(TestCase):
             },
             format='json'
         )
-        self.assertEqual(response_logout.status_code, status.HTTP_401_UNAUTHORIZED)
-        self.assertEqual(response_logout.data['detail'], 'Authentication credentials were not provided.')
+        self.assertEqual(
+            response_logout.status_code,
+            status.HTTP_401_UNAUTHORIZED
+            )
+        self.assertEqual(
+            response_logout.data['detail'],
+            'Authentication credentials were not provided.'
+            )
 
     def test_user_logout_with_all(self):
         client = self.client_login
@@ -77,13 +91,16 @@ class UserTestCase(TestCase):
             format='json'
         )
         self.assertEqual(response_logout.status_code, status.HTTP_200_OK)
-        self.assertEqual(response_logout.data['status'], 'OK, goodbye, all refresh tokens blacklisted')
+        self.assertEqual(
+            response_logout.data['status'],
+            'OK, goodbye, all refresh tokens blacklisted'
+            )
 
     def test_user_logout_get_new_token(self):
         client = self.client_login
         result = self.result
 
-        response_logout = client.post(
+        client.post(
             '/logout/', {
                 "refresh_token": result['refresh'],
             },
@@ -96,5 +113,11 @@ class UserTestCase(TestCase):
             },
             format='json'
         )
-        self.assertEqual(response_login_refresh.status_code, status.HTTP_401_UNAUTHORIZED)
-        self.assertEqual(response_login_refresh.data['detail'], 'Token is blacklisted')
+        self.assertEqual(
+            response_login_refresh.status_code,
+            status.HTTP_401_UNAUTHORIZED
+            )
+        self.assertEqual(
+            response_login_refresh.data['detail'],
+            'Token is blacklisted'
+            )
