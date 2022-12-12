@@ -11,12 +11,9 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
-import environ
 from datetime import timedelta
+import os
 
-
-env = environ.Env()
-environ.Env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,10 +23,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-2%(8ppvddfd^1l9c=gxpdwzg&4e&g&7=5k++(81jq^hsy%t0&t'
+SECRET_KEY = str(os.environ.get('SECRET_KEY'))
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = str(os.environ.get('DEBUG'))
 
 ALLOWED_HOSTS = []
 
@@ -88,9 +85,9 @@ WSGI_APPLICATION = 'todolist.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': env('DATABASE_NAME'),
-        'USER': env('DATABASE_USER'),
-        'PASSWORD': env('DATABASE_PASSWORD'),
+        'NAME': str(os.environ.get('DATABASE_NAME')),
+        'USER': str(os.environ.get('DATABASE_USER')),
+        'PASSWORD': str(os.environ.get('DATABASE_PASSWORD')),
         'HOST': 'localhost',
         'PORT': '5432',
     }
