@@ -99,7 +99,7 @@ Postman es un cliente GUI REST. Al importar las colecciones, puede explorar la A
 
 ### Postman Requests Import
 
-Puede descargar las requests necesarias [aquí](https://drive.google.com/file/d/1vAEl1PChXFw0G7q_JIOUIsp0I_RTE_fC/view?usp=sharing). Y luego importarlas a su cliente.
+Puede descargar las requests necesarias [aquí](https://drive.google.com/file/d/1mXbYJ_6z-LUmmh_us0aXEnP-NRbghrcR/view?usp=sharing). Y luego importarlas a su cliente.
 
 ## Autenticación
 ### Registration
