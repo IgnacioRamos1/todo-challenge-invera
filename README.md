@@ -250,7 +250,8 @@ Finalmente:
   python manage.py test
 ```
 El codigo cuenta con una covertura del 84% como se muestra a continuación:
-!(test_coverage.png)
+
+![test_coverage](https://user-images.githubusercontent.com/85854096/207335684-423a85e2-2ba0-4dc7-81be-e3f593bb8216.png)
 
 ## Aclaraciones
 - Se puede reducir el tiempo de vida del JWT Access Token ya que si una persona se desloguea, hasta que la vida útil del Token no se venza, el Token sigue siendo válido y puede ser utilizado para realizar requests.
