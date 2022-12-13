@@ -179,6 +179,6 @@ class UpdateTaskTestCase(TestCase):
             status.HTTP_403_FORBIDDEN
             )
         self.assertEqual(
-            response_update_task.data['message'],
+            response_update_task.data['detail'],
             'You are not the owner of this task.'
         )

@@ -12,7 +12,7 @@ class UpdateDestroyAPIView(
     def patch(self, request, *args, **kwargs):
         if self.get_object().owner != self.request.user:
             return Response(
-                {'message': 'You are not the owner of this task.'},
+                {'detail': 'You are not the owner of this task.'},
                 status=403
                 )
         return self.partial_update(request, *args, **kwargs)
@@ -21,11 +21,11 @@ class UpdateDestroyAPIView(
     def delete(self, request, *args, **kwargs):
         if self.get_object().owner != self.request.user:
             return Response(
-                {'message': 'You are not the owner of this task.'},
+                {'detail': 'You are not the owner of this task.'},
                 status=403
                 )
         self.destroy(request, *args, **kwargs)
         return Response(
-            {'message': 'Task deleted successfully.'},
+            {'detail': 'Task deleted successfully.'},
             status=204
             )

@@ -12,7 +12,20 @@ class DeleteTaskTestCase(TestCase):
     def setUp(self):
         date = timezone.now().strftime("%Y-%m-%dT%H:%M:%SZ")
 
+        user1 = User(
+            username='testing_login@testing.com',
+        )
+        user1.set_password('testing123')
+        user1.save()
+
+        user2 = User(
+            username='testing_login_2@testing.com',
+        )
+        user2.set_password('testing123')
+        user2.save()
+
         task = Task(
+            owner=user1,
             id=1,
             title='testing_get_task',
             description='testing_get_task',
@@ -21,11 +34,6 @@ class DeleteTaskTestCase(TestCase):
         )
         task.save()
 
-        user = User(
-            username='testing_login@testing.com',
-        )
-        user.set_password('testing123')
-        user.save()
 
         self.client_login = APIClient()
         response_login = self.client_login.post(
@@ -40,6 +48,15 @@ class DeleteTaskTestCase(TestCase):
         self.client_login.credentials(
             HTTP_AUTHORIZATION='Bearer ' + result['access']
             )
+
+        response_login_2 = self.client_login.post(
+            '/login/', {
+                "username": "testing_login_2@testing.com",
+                "password": "testing123"
+            },
+            format='json'
+        )
+        self.result_2 = json.loads(response_login_2.content)
 
     def test_delete_task(self):
         client = self.client_login
@@ -61,6 +78,7 @@ class DeleteTaskTestCase(TestCase):
             status.HTTP_204_NO_CONTENT
             )
         self.assertEqual(len(response_get_task.data), 0)
+        self.assertEqual(response_delete_task.data['detail'], 'Task deleted successfully.')
 
     def test_delete_task_not_found(self):
         client = self.client_login
@@ -115,4 +133,26 @@ class DeleteTaskTestCase(TestCase):
         self.assertEqual(
             response_delete_task.data['detail'],
             'Given token not valid for any token type'
+            )
+
+    def test_delete_task_without_ownership(self):
+        client = self.client_login
+
+        client.credentials(
+            HTTP_AUTHORIZATION='Bearer ' + self.result_2['access']
+            )
+
+        response_delete_task = client.delete(
+            '/tasks/1/', {
+            },
+            format='json'
+        )
+
+        self.assertEqual(
+            response_delete_task.status_code,
+            status.HTTP_403_FORBIDDEN
+            )
+        self.assertEqual(
+            response_delete_task.data['detail'],
+            'You are not the owner of this task.'
             )

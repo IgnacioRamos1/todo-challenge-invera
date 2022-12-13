@@ -9,11 +9,11 @@ import json
 
 class CreateTaskTestCase(TestCase):
     def setUp(self):
-        user = User(
-            username='testing_login',
+        self.user = User(
+            username='testing_login@testing.com',
         )
-        user.set_password('testing123')
-        user.save()
+        self.user.set_password('testing123')
+        self.user.save()
 
         self.client_login = APIClient()
         response_login = self.client_login.post(
@@ -33,9 +33,10 @@ class CreateTaskTestCase(TestCase):
 
     def test_create_task(self):
         client = self.client_login
-        
+
         response_create_task = client.post(
             '/tasks/', {
+                "owner": self.user.id,
                 "title": "testing_create_task",
                 "description": "testing_create_task",
                 "complete": False,
@@ -43,7 +44,7 @@ class CreateTaskTestCase(TestCase):
             },
             format='json'
         )
-
+        
         response_get_task = client.get(
             '/tasks/', {
             },
@@ -74,6 +75,7 @@ class CreateTaskTestCase(TestCase):
 
         response_create_task = client.post(
             '/tasks/', {
+                "owner": self.user.id,
                 "title": "testing_create_task",
                 "description": "testing_create_task",
                 "complete": False,
@@ -96,6 +98,7 @@ class CreateTaskTestCase(TestCase):
         client.credentials(HTTP_AUTHORIZATION='Bearer ' + 'invalid_token')
         response_create_task = client.post(
             '/tasks/', {
+                "owner": self.user.id,
                 "title": "testing_create_task",
                 "description": "testing_create_task",
                 "complete": False,
@@ -117,6 +120,7 @@ class CreateTaskTestCase(TestCase):
 
         response_create_task = client.post(
             '/tasks/', {
+                "owner": self.user.id,
                 "description": "testing_create_task",
                 "complete": False,
                 "expiration_date": self.date
@@ -136,6 +140,7 @@ class CreateTaskTestCase(TestCase):
 
         response_create_task = client.post(
             '/tasks/', {
+                "owner": self.user.id,
                 "title": "testing_create_task_testing_create_task_testing_create_task_testing_create_task_testing_create_task_testing_create_task_testing_create_task_testing_create_task_testing_create_task_testing_create_task__",
                 "description": "testing_create_task",
                 "complete": False,
