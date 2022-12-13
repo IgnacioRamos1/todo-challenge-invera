@@ -1,5 +1,22 @@
 version: '3.8'
 services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: 123
+      POSTGRES_USER: postgres
+      POSTGRES_DB: todolist
+    ports:
+      - 5432:5432
+    volumes:
+      - ./db_data:/var/lib/postgresql/data/ 
+  migration:
+    build: .
+    command: bash -c "python manage.py makemigrations && python manage.py migrate"
+    volumes:
+      - .:/app
+    depends_on:
+      - db
   web:
     build: .
     command: python manage.py runserver 0.0.0.0:8000
@@ -10,18 +27,3 @@ services:
     depends_on:
       - db
       - migration
-  migration:
-    build: .
-    command: python manage.py migrate --noinput
-    volumes:
-      - .:/app
-    depends_on:
-      - db
-  db:
-    image: postgres
-    environment:
-      POSTGRES_PASSWORD: 123
-      POSTGRES_USER: postgres
-      POSTGRES_DB: todolist
-    volumes:
-      - ./db_data:/var/lib/postgresql/data/
