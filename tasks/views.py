@@ -1,5 +1,7 @@
 from rest_framework import generics, filters
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from django.contrib.auth.models import User
 import logging
 
 from .serializers import TaskSerializer
@@ -21,7 +23,7 @@ class TaskSearchListCreateAPIView(
     search_fields = ['title', 'description', 'expiration_date', 'complete']
 
     def get_queryset(self):
-        queryset = Task.objects.all()
+        queryset = Task.objects.filter(owner=self.request.user)
         logger.info(
             f'User {self.request.user.username} got tasks successfully.'
             )
@@ -31,8 +33,7 @@ class TaskSearchListCreateAPIView(
         logger.info(
             f'User {self.request.user.username} created task successfully.'
             )
-        serializer.save()
-
+        serializer.save(owner=self.request.user)
 
 task_search_list_create_view = TaskSearchListCreateAPIView.as_view()
 
@@ -43,16 +44,15 @@ class TaskUpdateDeleteAPIView(
         ):
 
     permission_classes = [IsAuthenticated]
-
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
     lookup_field = 'id'
 
-    def perform_delete(self, instance):
+    def perform_delete(self, serializer):
         logger.info(
             f'User {self.request.user.username} deleted task successfully.'
             )
-        super().perform_delete(instance)
+        super().perform_delete(serializer)
 
     def perform_patch(self, serializer):
         logger.info(
@@ -62,3 +62,4 @@ class TaskUpdateDeleteAPIView(
 
 
 task_update_delete_view = TaskUpdateDeleteAPIView.as_view()
+ 
