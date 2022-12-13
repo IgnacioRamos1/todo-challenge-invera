@@ -19,7 +19,7 @@ class TaskSearchListCreateAPIView(
     permission_classes = [IsAuthenticated]
 
     serializer_class = TaskSerializer
-    filter_backends = [filters.SearchFilter]
+    filter_tasks = [filters.SearchFilter]
     search_fields = ['title', 'description', 'expiration_date', 'complete']
 
     def get_queryset(self):

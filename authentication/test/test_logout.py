@@ -13,9 +13,9 @@ class UserTestCase(TestCase):
         user.set_password('testing123')
         user.save()
 
-        self.client_login = APIClient()
-        response_login = self.client_login.post(
-            '/login/', {
+        self.client_logout = APIClient()
+        response_login = self.client_logout.post(
+            '/auth/login/', {
                 "username": "testing_login@testing.com",
                 "password": "testing123"
             },
@@ -23,31 +23,25 @@ class UserTestCase(TestCase):
         )
         self.result = json.loads(response_login.content)
 
-        self.client_login.credentials(
+        self.client_logout.credentials(
             HTTP_AUTHORIZATION='Bearer ' + self.result['access']
             )
 
     def test_user_logout(self):
-        client = self.client_login
-        result = self.result
-
-        response_logout = client.post(
-            '/logout/', {
-                "refresh_token": result['refresh'],
+        response_logout = self.client_logout.post(
+            '/auth/logout/', {
+                "refresh_token": self.result['refresh'],
             },
             format='json'
         )
         self.assertEqual(response_logout.status_code, status.HTTP_200_OK)
-        self.assertEqual(response_logout.data['status'], 'OK, goodbye')
+        self.assertEqual(response_logout.data['detail'], 'Logged out successfully')
 
     def test_user_logout_without_refresh_token(self):
-        client = self.client_login
-        result = self.result
+        self.client_logout.credentials(HTTP_AUTHORIZATION='Bearer ' + self.result['access'])
 
-        client.credentials(HTTP_AUTHORIZATION='Bearer ' + result['access'])
-
-        response_logout = client.post(
-            '/logout/', {
+        response_logout = self.client_logout.post(
+            '/auth/logout/', {
             },
             format='json'
         )
@@ -61,14 +55,11 @@ class UserTestCase(TestCase):
             )
 
     def test_user_logout_without_token(self):
-        client = self.client_login
-        result = self.result
+        self.client_logout.credentials()
 
-        client.credentials()
-
-        response_logout = client.post(
-            '/logout/', {
-                "refresh_token": result['refresh'],
+        response_logout = self.client_logout.post(
+            '/auth/logout/', {
+                "refresh_token": self.result['refresh'],
             },
             format='json'
         )
@@ -82,34 +73,29 @@ class UserTestCase(TestCase):
             )
 
     def test_user_logout_with_all(self):
-        client = self.client_login
-
-        response_logout = client.post(
-            '/logout/', {
+        response_logout = self.client_logout.post(
+            '/auth/logout/', {
                 "all": True,
             },
             format='json'
         )
         self.assertEqual(response_logout.status_code, status.HTTP_200_OK)
         self.assertEqual(
-            response_logout.data['status'],
-            'OK, goodbye, all refresh tokens blacklisted'
+            response_logout.data['detail'],
+            'All refresh tokens have been blacklisted'
             )
 
     def test_user_logout_get_new_token(self):
-        client = self.client_login
-        result = self.result
-
-        client.post(
-            '/logout/', {
-                "refresh_token": result['refresh'],
+        self.client_logout.post(
+            '/auth/logout/', {
+                "refresh_token": self.result['refresh'],
             },
             format='json'
         )
 
-        response_login_refresh = client.post(
-            '/login/refresh/', {
-                "refresh": result['refresh'],
+        response_login_refresh = self.client_logout.post(
+            '/auth/login/refresh/', {
+                "refresh": self.result['refresh'],
             },
             format='json'
         )

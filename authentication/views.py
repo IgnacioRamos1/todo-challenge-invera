@@ -19,6 +19,11 @@ class RegistrationAPIView(generics.GenericAPIView):
     serializer_class = RegistrationSerializer
 
     def post(self, request):
+        if request.headers.get('Authorization'):
+            return Response(
+                {'message': 'Cannot register with an access token'},
+                status=400
+                )
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
@@ -46,13 +51,13 @@ user_registration = RegistrationAPIView.as_view()
 class LogoutView(APIView):
     permission_classes = (IsAuthenticated,)
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
         if self.request.data.get('all'):
             token: OutstandingToken
             for token in OutstandingToken.objects.filter(user=request.user):
                 _, _ = BlacklistedToken.objects.get_or_create(token=token)
             return Response(
-                {"status": "OK, goodbye, all refresh tokens blacklisted"},
+                {"detail": "All refresh tokens have been blacklisted"},
                 status=200
                 )
 
@@ -63,12 +68,24 @@ class LogoutView(APIView):
                 status=400
                 )
 
+        # get refresh token id
+        token = RefreshToken(token=refresh_token)
+        jti = token['jti']
+
+        # check if token is already blacklisted using jti
+        if BlacklistedToken.objects.filter(token__jti=jti).exists():
+            return Response(
+                {'detail': 'Token already blacklisted'},
+                status=400
+                )
+    
         token = RefreshToken(token=refresh_token)
         token.blacklist()
 
+
         logger.info(f'User {request.user.username} logged out successfully.')
 
-        return Response({"status": "OK, goodbye"}, status=200)
+        return Response({"detail": "Logged out successfully"}, status=200)
 
 
 user_logout = LogoutView.as_view()

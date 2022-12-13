@@ -29,7 +29,7 @@ class GetTaskTestCase(TestCase):
 
         self.client_login = APIClient()
         response_login = self.client_login.post(
-            '/login/', {
+            '/auth/login/', {
                 "username": "testing_login@testing.com",
                 "password": "testing123"
             },
@@ -42,9 +42,7 @@ class GetTaskTestCase(TestCase):
             )
 
     def test_get_task(self):
-        client = self.client_login
-
-        response_get_task = client.get(
+        response_get_task = self.client_login.get(
             '/tasks/', {
             },
             format='json'
@@ -52,11 +50,9 @@ class GetTaskTestCase(TestCase):
         self.assertEqual(response_get_task.status_code, status.HTTP_200_OK)
 
     def test_get_task_without_token(self):
-        client = self.client_login
+        self.client_login.credentials()
 
-        client.credentials()
-
-        response_get_task = client.get(
+        response_get_task = self.client_login.get(
             '/tasks/', {
             },
             format='json'
@@ -71,11 +67,9 @@ class GetTaskTestCase(TestCase):
             )
 
     def test_get_task_with_invalid_token(self):
-        client = self.client_login
+        self.client_login.credentials(HTTP_AUTHORIZATION='Bearer ' + 'invalid_token')
 
-        client.credentials(HTTP_AUTHORIZATION='Bearer ' + 'invalid_token')
-
-        response_get_task = client.get(
+        response_get_task = self.client_login.get(
             '/tasks/', {
             },
             format='json'

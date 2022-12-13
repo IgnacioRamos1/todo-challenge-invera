@@ -34,7 +34,7 @@ class UpdateTaskTestCase(TestCase):
 
         self.client_login = APIClient()
         response_login = self.client_login.post(
-            '/login/', {
+            '/auth/login/', {
                 "username": "testing_login@testing.com",
                 "password": "testing123"
             },
@@ -47,7 +47,7 @@ class UpdateTaskTestCase(TestCase):
             )
 
         response_login_2 = self.client_login.post(
-            '/login/', {
+            '/auth/login/', {
                 "username": "testing_login_2@testing.com",
                 "password": "testing123"
             },
@@ -58,9 +58,7 @@ class UpdateTaskTestCase(TestCase):
         self.date = timezone.now().strftime("%Y-%m-%dT%H:%M:%SZ")
 
     def test_update_task(self):
-        client = self.client_login
-
-        response_update_task = client.patch(
+        response_update_task = self.client_login.patch(
             '/tasks/1/', {
                 "title": "testing_update_task",
                 "description": "testing_update_task",
@@ -70,7 +68,7 @@ class UpdateTaskTestCase(TestCase):
             format='json'
         )
 
-        response_get_updated_task = client.get(
+        response_get_updated_task = self.client_login.get(
             '/tasks/', {
             },
             format='json'
@@ -101,9 +99,7 @@ class UpdateTaskTestCase(TestCase):
 
 
     def test_update_task_not_found(self):
-        client = self.client_login
-
-        response_update_task = client.patch(
+        response_update_task = self.client_login.patch(
             '/tasks/2/', {
                 "title": "testing_update_task",
                 "description": "testing_update_task",
@@ -119,11 +115,9 @@ class UpdateTaskTestCase(TestCase):
             )
 
     def test_update_task_without_token(self):
-        client = self.client_login
+        self.client_login.credentials()
 
-        client.credentials()
-
-        response_update_task = client.patch(
+        response_update_task = self.client_login.patch(
             '/tasks/1/', {
                 "title": "testing_update_task",
                 "description": "testing_update_task",
@@ -139,11 +133,9 @@ class UpdateTaskTestCase(TestCase):
             )
 
     def test_update_task_with_invalid_token(self):
-        client = self.client_login
+        self.client_login.credentials(HTTP_AUTHORIZATION='Bearer ' + 'invalid_token')
 
-        client.credentials(HTTP_AUTHORIZATION='Bearer ' + 'invalid_token')
-
-        response_update_task = client.patch(
+        response_update_task = self.client_login.patch(
             '/tasks/1/', {
                 "title": "testing_update_task",
                 "description": "testing_update_task",
@@ -159,11 +151,10 @@ class UpdateTaskTestCase(TestCase):
             )
 
     def test_update_task_without_ownership(self):
-        client = self.client_login
         self.client_login.credentials(
             HTTP_AUTHORIZATION='Bearer ' + self.result_2['access']
             )
-        response_update_task = client.patch(
+        response_update_task = self.client_login.patch(
             '/tasks/1/', {
                 "title": "testing_update_task",
                 "description": "testing_update_task",

@@ -14,9 +14,8 @@ class UserLoginTestCase(TestCase):
         user.save()
 
     def test_user_login(self):
-        client = APIClient()
-        response = client.post(
-            '/login/', {
+        response = APIClient().post(
+            '/auth/login/', {
                 "username": "testing_login@testing.com",
                 "password": "testing123"
             },
@@ -28,9 +27,8 @@ class UserLoginTestCase(TestCase):
         self.assertIn('refresh', result)
 
     def test_wrong_user_login(self):
-        client = APIClient()
-        response = client.post(
-            '/login/', {
+        response = APIClient().post(
+            '/auth/login/', {
                 "username": "testing@testing.com",
                 "password": "testing123"
             },
@@ -43,9 +41,8 @@ class UserLoginTestCase(TestCase):
             )
 
     def test_wrong_password_login(self):
-        client = APIClient()
-        response = client.post(
-            '/login/', {
+        response = APIClient().post(
+            '/auth/login/', {
                 "username": "testing@testing.com",
                 "password": "testing"
             },
@@ -58,9 +55,8 @@ class UserLoginTestCase(TestCase):
             )
 
     def test_no_username_login(self):
-        client = APIClient()
-        response = client.post(
-            '/login/', {
+        response = APIClient().post(
+            '/auth/login/', {
                 "password": "testing123"
             },
             format='json'
@@ -72,9 +68,8 @@ class UserLoginTestCase(TestCase):
             )
 
     def test_no_password_login(self):
-        client = APIClient()
-        response = client.post(
-            '/login/', {
+        response = APIClient().post(
+            '/auth/login/', {
                 "username": "testing@testing.com"
             },
             format='json'

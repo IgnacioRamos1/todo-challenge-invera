@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
     'tasks',
-    'authorization',
+    'authentication',
     'log_visualizer',
     'drf_yasg',
     'django_nose',
@@ -145,7 +145,8 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(hours=6),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'ROTATE_REFRESH_TOKENS': True,
-    'BLACKLIST_AFTER_ROTATION': True
+    'BLACKLIST_AFTER_ROTATION': True,
+    'JTI_CLAIM': 'jti',
 }
 
 # Create a custom logger saving every level to a different file, spceifying message, date and time format.

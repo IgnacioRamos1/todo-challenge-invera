@@ -37,7 +37,7 @@ class DeleteTaskTestCase(TestCase):
 
         self.client_login = APIClient()
         response_login = self.client_login.post(
-            '/login/', {
+            '/auth/login/', {
                 "username": "testing_login@testing.com",
                 "password": "testing123"
             },
@@ -50,7 +50,7 @@ class DeleteTaskTestCase(TestCase):
             )
 
         response_login_2 = self.client_login.post(
-            '/login/', {
+            '/auth/login/', {
                 "username": "testing_login_2@testing.com",
                 "password": "testing123"
             },
@@ -59,15 +59,13 @@ class DeleteTaskTestCase(TestCase):
         self.result_2 = json.loads(response_login_2.content)
 
     def test_delete_task(self):
-        client = self.client_login
-
-        response_delete_task = client.delete(
+        response_delete_task = self.client_login.delete(
             '/tasks/1/', {
             },
             format='json'
         )
 
-        response_get_task = client.get(
+        response_get_task = self.client_login.get(
             '/tasks/', {
             },
             format='json'
@@ -81,9 +79,7 @@ class DeleteTaskTestCase(TestCase):
         self.assertEqual(response_delete_task.data['detail'], 'Task deleted successfully.')
 
     def test_delete_task_not_found(self):
-        client = self.client_login
-
-        response_delete_task = client.delete(
+        response_delete_task = self.client_login.delete(
             '/tasks/2/', {
             },
             format='json'
@@ -96,11 +92,9 @@ class DeleteTaskTestCase(TestCase):
         self.assertEqual(response_delete_task.data['detail'], 'Not found.')
 
     def test_delete_task_without_token(self):
-        client = self.client_login
+        self.client_login.credentials()
 
-        client.credentials()
-
-        response_delete_task = client.delete(
+        response_delete_task = self.client_login.delete(
             '/tasks/1/', {
             },
             format='json'
@@ -116,11 +110,9 @@ class DeleteTaskTestCase(TestCase):
             )
 
     def test_delete_task_with_invalid_token(self):
-        client = self.client_login
+        self.client_login.credentials(HTTP_AUTHORIZATION='Bearer ' + 'invalid_token')
 
-        client.credentials(HTTP_AUTHORIZATION='Bearer ' + 'invalid_token')
-
-        response_delete_task = client.delete(
+        response_delete_task = self.client_login.delete(
             '/tasks/1/', {
             },
             format='json'
@@ -136,13 +128,11 @@ class DeleteTaskTestCase(TestCase):
             )
 
     def test_delete_task_without_ownership(self):
-        client = self.client_login
-
-        client.credentials(
+        self.client_login.credentials(
             HTTP_AUTHORIZATION='Bearer ' + self.result_2['access']
             )
 
-        response_delete_task = client.delete(
+        response_delete_task = self.client_login.delete(
             '/tasks/1/', {
             },
             format='json'

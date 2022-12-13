@@ -17,7 +17,7 @@ class CreateTaskTestCase(TestCase):
 
         self.client_login = APIClient()
         response_login = self.client_login.post(
-            '/login/', {
+            '/auth/login/', {
                 "username": "testing_login@testing.com",
                 "password": "testing123"
             },
@@ -32,9 +32,7 @@ class CreateTaskTestCase(TestCase):
         self.date = timezone.now().strftime("%Y-%m-%dT%H:%M:%SZ")
 
     def test_create_task(self):
-        client = self.client_login
-
-        response_create_task = client.post(
+        response_create_task = self.client_login.post(
             '/tasks/', {
                 "owner": self.user.id,
                 "title": "testing_create_task",
@@ -45,7 +43,7 @@ class CreateTaskTestCase(TestCase):
             format='json'
         )
         
-        response_get_task = client.get(
+        response_get_task = self.client_login.get(
             '/tasks/', {
             },
             format='json'
@@ -69,11 +67,9 @@ class CreateTaskTestCase(TestCase):
             )
 
     def test_create_task_without_token(self):
-        client = self.client_login
+        self.client_login.credentials()
 
-        client.credentials()
-
-        response_create_task = client.post(
+        response_create_task = self.client_login.post(
             '/tasks/', {
                 "owner": self.user.id,
                 "title": "testing_create_task",
@@ -93,10 +89,8 @@ class CreateTaskTestCase(TestCase):
             )
 
     def test_create_task_with_invalid_token(self):
-        client = self.client_login
-
-        client.credentials(HTTP_AUTHORIZATION='Bearer ' + 'invalid_token')
-        response_create_task = client.post(
+        self.client_login.credentials(HTTP_AUTHORIZATION='Bearer ' + 'invalid_token')
+        response_create_task = self.client_login.post(
             '/tasks/', {
                 "owner": self.user.id,
                 "title": "testing_create_task",
@@ -116,9 +110,7 @@ class CreateTaskTestCase(TestCase):
             )
 
     def test_create_task_with_no_title(self):
-        client = self.client_login
-
-        response_create_task = client.post(
+        response_create_task = self.client_login.post(
             '/tasks/', {
                 "owner": self.user.id,
                 "description": "testing_create_task",
@@ -136,9 +128,7 @@ class CreateTaskTestCase(TestCase):
             )
 
     def test_create_task_with_too_long_title(self):
-        client = self.client_login
-
-        response_create_task = client.post(
+        response_create_task = self.client_login.post(
             '/tasks/', {
                 "owner": self.user.id,
                 "title": "testing_create_task_testing_create_task_testing_create_task_testing_create_task_testing_create_task_testing_create_task_testing_create_task_testing_create_task_testing_create_task_testing_create_task__",
