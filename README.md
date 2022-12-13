@@ -14,10 +14,27 @@ Una ToDo-List API creada con Django Rest Framework y Python. Es capaz de:
 
 ## IMPORTANTE
 
-En el caso de tener una MacM1 por favor corra:
+En el caso de tener una Mac M1 por favor corra:
 ```bash
-  $ export DOCKER_DEFAULT_PLATFORM=linux/amd64
+  export DOCKER_DEFAULT_PLATFORM=linux/amd64
 
+```
+
+## Environment Variables
+
+Para ejecutar este proyecto, deberá agregar las siguientes variables de entorno a su archivo .env.
+
+El archivo .env debe encontrarse en la raíz del proyecto.
+```bash
+SECRET_KEY = your_secret_key
+
+DEBUG = True
+
+DATABASE_NAME = your_db_name
+
+DATABASE_USER = your_db_user
+
+DATABASE_PASSWORD = your_db_password
 ```
 
 ## Instalación
@@ -32,7 +49,7 @@ Clone el repositorio y acceda a la carpeta recién creada
   cd my-project
 ```
 
-Por favor chequear que Docker este corriendo en su máquina y que PostgreSQL no.
+Por favor validar que Docker este corriendo en su máquina y que PostgreSQL no.
 
 Finalmente levante la imagen de Docker:
 
@@ -76,22 +93,8 @@ Finalmente, asegúrese que está en el directorio raíz y ya puede correr la API
 ```bash
   python manage.py runserver
 ```
-## Environment Variables
 
-Para ejecutar este proyecto, deberá agregar las siguientes variables de entorno a su archivo .env.
-
-El archivo .env debe encontrarse en la raíz del proyecto.
-
-`SECRET_KEY`
-
-`DEBUG`
-
-`DATABASE_NAME`
-
-`DATABASE_USER`
-
-`DATABASE_PASSWORD`
-## First Steps
+## Primeros Pasos
 
 Se recomienda el uso de Postman para una mejor y más fácil experiencia. 
 
@@ -99,33 +102,33 @@ Postman es un cliente GUI REST. Al importar las colecciones, puede explorar la A
 
 ### Postman Requests Import
 
-Puede descargar las requests necesarias [aquí](https://drive.google.com/file/d/1mXbYJ_6z-LUmmh_us0aXEnP-NRbghrcR/view?usp=sharing). Y luego importarlas a su cliente.
+Puede descargar las requests necesarias [aquí](https://drive.google.com/file/d/1mXbYJ_6z-LUmmh_us0aXEnP-NRbghrcR/view?usp=sharing) e importarlas en Postman
 
 ## Autenticación
 ### Registration
 
 Para poder registrarse deberá acceder al siguiente endpoint:
 ```bash
-  http://localhost:8000/auth/register/
+  http://localhost:8000/auth/register/ # POST
 ```
 
-(Cuidado con enviar un Token de autenticación como header).
+(Cuidado, no enviar un Token de autenticación como header).
 
-Deberá enviarle un POST request con el siguiente formato de JSON:
+Deberá cargar lo siguiente en el body.
 ```bash
 {
-    "username": "your username",
-    "password": "your password"
+    "username": "example@example.com",
+    "password": "your_password"
 }
 ```
 
 ### Login
 Para poder loguearse deberá acceder al siguiente endpoint:
 ```bash
-  http://localhost:8000/auth/login/
+  http://localhost:8000/auth/login/ # POST
 ```
 
-Deberá enviarle un POST request con el siguiente formato de JSON:
+Deberá cargar lo siguiente en el body.
 ```bash
 {
     "username": "your registered username",
@@ -144,16 +147,15 @@ Y le devolverá un access token y refresh token que podrá usar en los CRUD endp
 ### Logout
 Para poder desloguearse deberá acceder al siguiente endpoint:
 ```bash
-  http://localhost:8000/auth/logout/
+  http://localhost:8000/auth/logout/ # POST
 ```
 
-Deberá enviarle un POST request con el siguiente formato de JSON:
+Deberá pasar su access token como header de autenticación y cargar lo siguiente en el body.
 ```bash
 {
     "refresh_token": "your_refresh_token",
 }
 ```
-Y también deberá pasar su access token como header de autenticación.
 
 ## CRUD API
 
@@ -162,19 +164,17 @@ Para poder acceder a todos los siguientes endopoints, en cada request, debe envi
 ### Get Tasks
 Para poder obtener una lista de todas sus tareas deberá acceder al siguiente endpoint:
 ```bash
-  http://localhost:8000/tasks/
+  http://localhost:8000/tasks/ # GET
 ```
-
-Deberá enviarle un GET request.
 
 ### Create Task
 
 Para poder crear una nueva tarea deberá acceder al siguiente endpoint:
 ```bash
-  http://localhost:8000/tasks/
+  http://localhost:8000/tasks/ # POST
 ```
 
-Deberá enviarle un POST request con el siguiente formato de JSON:
+Deberá cargar lo siguiente en el body.
 ```bash
 {
     "title": "your title",
@@ -189,18 +189,16 @@ El único campo obligatorio  es el "title", el resto si no se desea enviarlos no
 
 Para poder eliminar una nueva tarea deberá acceder al siguiente endpoint:
 ```bash
-  http://localhost:8000/tasks/{task_id}/
+  http://localhost:8000/tasks/{task_id}/ # DELETE
 ```
-
-Deberá enviarle un DELETE request.
 
 ### Update Task
 Para poder actualizar una nueva tarea deberá acceder al siguiente endpoint:
 ```bash
-  http://localhost:8000/tasks/{task_id}/
+  http://localhost:8000/tasks/{task_id}/ # PATCH
 ```
 
-Deberá enviarle un PATCH request con el siguiente formato de JSON:
+Deberá cargar lo siguiente en el body.
 ```bash
 {
     "title": "your new title",
@@ -213,9 +211,9 @@ Deberá enviarle un PATCH request con el siguiente formato de JSON:
 ### Refresh Token
 Si desea actualizar sus credenciales deberá acceder al siguiente endpoint:
 ```bash
-  http://localhost:8000/auth/login/refresh/
+  http://localhost:8000/auth/login/refresh/ # POST
 ```
-Deberá enviarle un POST request con el siguiente formato de JSON:
+Deberá cargar lo siguiente en el body.
 ```bash
 {
     "refresh_token": "your_refresh_token",
@@ -232,14 +230,14 @@ Los logs están divididos en las siguientes categorías:
 
 Si desea acceder a los logs deberá acceder al siguiente endopoint:
 ```bash
-  http://localhost:8000/logs/{categoria}/
+  http://localhost:8000/logs/{categoria}/ # GET
 ```
 
 
 ### Docs
 Si desea acceder a la documentación de la API deberá acceder al siguiente endpoint:
 ```bash
-  http://localhost:8000/docs/
+  http://localhost:8000/docs/ # GET
 ```
 
 
