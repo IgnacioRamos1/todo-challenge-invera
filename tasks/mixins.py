@@ -17,7 +17,6 @@ class UpdateDestroyAPIView(
                 )
         return self.partial_update(request, *args, **kwargs)
 
-
     def delete(self, request, *args, **kwargs):
         if self.get_object().owner != self.request.user:
             return Response(

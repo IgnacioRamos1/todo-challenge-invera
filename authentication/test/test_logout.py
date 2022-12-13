@@ -35,10 +35,15 @@ class UserTestCase(TestCase):
             format='json'
         )
         self.assertEqual(response_logout.status_code, status.HTTP_200_OK)
-        self.assertEqual(response_logout.data['detail'], 'Logged out successfully')
+        self.assertEqual(
+            response_logout.data['detail'],
+            'Logged out successfully'
+            )
 
     def test_user_logout_without_refresh_token(self):
-        self.client_logout.credentials(HTTP_AUTHORIZATION='Bearer ' + self.result['access'])
+        self.client_logout.credentials(
+            HTTP_AUTHORIZATION='Bearer ' + self.result['access']
+            )
 
         response_logout = self.client_logout.post(
             '/auth/logout/', {

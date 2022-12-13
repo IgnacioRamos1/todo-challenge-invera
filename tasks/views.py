@@ -1,7 +1,5 @@
 from rest_framework import generics, filters
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from django.contrib.auth.models import User
 import logging
 
 from .serializers import TaskSerializer
@@ -35,6 +33,7 @@ class TaskSearchListCreateAPIView(
             )
         serializer.save(owner=self.request.user)
 
+
 task_search_list_create_view = TaskSearchListCreateAPIView.as_view()
 
 
@@ -62,4 +61,3 @@ class TaskUpdateDeleteAPIView(
 
 
 task_update_delete_view = TaskUpdateDeleteAPIView.as_view()
- 

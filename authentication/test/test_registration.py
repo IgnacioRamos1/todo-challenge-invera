@@ -104,7 +104,7 @@ class UserRegistrationTestCase(TestCase):
             )
 
     def test_user_registration_was_saved_to_db(self):
-        response = APIClient().post(
+        APIClient().post(
             '/auth/register/', {
                 "username": "testing@testing.com",
                 "password": "testing123"
@@ -134,7 +134,9 @@ class UserRegistrationTestCase(TestCase):
 
         result = json.loads(response_login.content)
 
-        APIClient().credentials(HTTP_AUTHORIZATION='Bearer ' + result['access'])
+        APIClient().credentials(
+            HTTP_AUTHORIZATION='Bearer ' + result['access']
+            )
 
         response_register_2 = APIClient().post(
             '/auth/register/', {
@@ -144,5 +146,11 @@ class UserRegistrationTestCase(TestCase):
             format='json'
         )
 
-        self.assertEqual(response_register_2.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response_register_2.data['message'], 'Cannot register with an access token')
+        self.assertEqual(
+            response_register_2.status_code,
+            status.HTTP_400_BAD_REQUEST
+            )
+        self.assertEqual(
+            response_register_2.data['message'],
+            'Cannot register with an access token'
+            )

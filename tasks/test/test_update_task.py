@@ -15,7 +15,7 @@ class UpdateTaskTestCase(TestCase):
         )
         user1.set_password('testing123')
         user1.save()
-        
+
         user2 = User(
             username='testing_login_2@testing.com',
         )
@@ -54,7 +54,7 @@ class UpdateTaskTestCase(TestCase):
             format='json'
         )
         self.result_2 = json.loads(response_login_2.content)
-        
+
         self.date = timezone.now().strftime("%Y-%m-%dT%H:%M:%SZ")
 
     def test_update_task(self):
@@ -97,7 +97,6 @@ class UpdateTaskTestCase(TestCase):
             self.date
             )
 
-
     def test_update_task_not_found(self):
         response_update_task = self.client_login.patch(
             '/tasks/2/', {
@@ -133,7 +132,9 @@ class UpdateTaskTestCase(TestCase):
             )
 
     def test_update_task_with_invalid_token(self):
-        self.client_login.credentials(HTTP_AUTHORIZATION='Bearer ' + 'invalid_token')
+        self.client_login.credentials(
+            HTTP_AUTHORIZATION='Bearer ' + 'invalid_token'
+            )
 
         response_update_task = self.client_login.patch(
             '/tasks/1/', {
@@ -163,7 +164,6 @@ class UpdateTaskTestCase(TestCase):
             },
             format='json'
         )
-
 
         self.assertEqual(
             response_update_task.status_code,

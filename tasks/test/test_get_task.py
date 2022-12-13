@@ -7,6 +7,7 @@ import json
 
 from tasks.models import Task
 
+
 class GetTaskTestCase(TestCase):
     def setUp(self):
         date = timezone.now().strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -25,7 +26,6 @@ class GetTaskTestCase(TestCase):
             expiration_date=date
         )
         task.save()
-
 
         self.client_login = APIClient()
         response_login = self.client_login.post(
@@ -67,7 +67,9 @@ class GetTaskTestCase(TestCase):
             )
 
     def test_get_task_with_invalid_token(self):
-        self.client_login.credentials(HTTP_AUTHORIZATION='Bearer ' + 'invalid_token')
+        self.client_login.credentials(
+            HTTP_AUTHORIZATION='Bearer ' + 'invalid_token'
+            )
 
         response_get_task = self.client_login.get(
             '/tasks/', {

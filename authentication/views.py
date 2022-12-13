@@ -78,10 +78,9 @@ class LogoutView(APIView):
                 {'detail': 'Token already blacklisted'},
                 status=400
                 )
-    
+
         token = RefreshToken(token=refresh_token)
         token.blacklist()
-
 
         logger.info(f'User {request.user.username} logged out successfully.')
 

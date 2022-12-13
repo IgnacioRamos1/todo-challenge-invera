@@ -34,7 +34,6 @@ class DeleteTaskTestCase(TestCase):
         )
         task.save()
 
-
         self.client_login = APIClient()
         response_login = self.client_login.post(
             '/auth/login/', {
@@ -76,7 +75,10 @@ class DeleteTaskTestCase(TestCase):
             status.HTTP_204_NO_CONTENT
             )
         self.assertEqual(len(response_get_task.data), 0)
-        self.assertEqual(response_delete_task.data['detail'], 'Task deleted successfully.')
+        self.assertEqual(
+            response_delete_task.data['detail'],
+            'Task deleted successfully.'
+            )
 
     def test_delete_task_not_found(self):
         response_delete_task = self.client_login.delete(
@@ -110,7 +112,9 @@ class DeleteTaskTestCase(TestCase):
             )
 
     def test_delete_task_with_invalid_token(self):
-        self.client_login.credentials(HTTP_AUTHORIZATION='Bearer ' + 'invalid_token')
+        self.client_login.credentials(
+            HTTP_AUTHORIZATION='Bearer ' + 'invalid_token'
+            )
 
         response_delete_task = self.client_login.delete(
             '/tasks/1/', {

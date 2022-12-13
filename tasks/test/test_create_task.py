@@ -42,7 +42,7 @@ class CreateTaskTestCase(TestCase):
             },
             format='json'
         )
-        
+
         response_get_task = self.client_login.get(
             '/tasks/', {
             },
@@ -89,7 +89,9 @@ class CreateTaskTestCase(TestCase):
             )
 
     def test_create_task_with_invalid_token(self):
-        self.client_login.credentials(HTTP_AUTHORIZATION='Bearer ' + 'invalid_token')
+        self.client_login.credentials(
+            HTTP_AUTHORIZATION='Bearer ' + 'invalid_token'
+            )
         response_create_task = self.client_login.post(
             '/tasks/', {
                 "owner": self.user.id,
