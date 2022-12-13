@@ -13,19 +13,16 @@ class UpdateDestroyAPIView(
         if self.get_object().owner != self.request.user:
             return Response(
                 {'message': 'You are not the owner of this task.'},
-                status=400
+                status=403
                 )
-        self.partial_update(request, *args, **kwargs)
-        return Response(
-            {'message': 'Task updated successfully.'},
-            status=200
-            )
+        return self.partial_update(request, *args, **kwargs)
+
 
     def delete(self, request, *args, **kwargs):
         if self.get_object().owner != self.request.user:
             return Response(
                 {'message': 'You are not the owner of this task.'},
-                status=400
+                status=403
                 )
         self.destroy(request, *args, **kwargs)
         return Response(

@@ -10,7 +10,7 @@ import json
 class CreateTaskTestCase(TestCase):
     def setUp(self):
         user = User(
-            username='testing_login@testing.com',
+            username='testing_login',
         )
         user.set_password('testing123')
         user.save()
