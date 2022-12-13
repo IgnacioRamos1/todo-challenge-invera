@@ -19,11 +19,6 @@ class RegistrationAPIView(generics.GenericAPIView):
     serializer_class = RegistrationSerializer
 
     def post(self, request):
-        if request.headers.get('Authorization'):
-            return Response(
-                {'message': 'Cannot register with an access token'},
-                status=400
-                )
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
@@ -68,22 +63,10 @@ class LogoutView(APIView):
                 status=400
                 )
 
-        # get refresh token id
-        token = RefreshToken(token=refresh_token)
-        jti = token['jti']
-
-        # check if token is already blacklisted using jti
-        if BlacklistedToken.objects.filter(token__jti=jti).exists():
-            return Response(
-                {'detail': 'Token already blacklisted'},
-                status=400
-                )
-
         token = RefreshToken(token=refresh_token)
         token.blacklist()
 
         logger.info(f'User {request.user.username} logged out successfully.')
-
         return Response({"detail": "Logged out successfully"}, status=200)
 
 
