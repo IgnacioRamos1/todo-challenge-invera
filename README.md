@@ -1,5 +1,5 @@
 
-# Invera ToDo-List Challenge
+# ToDo-List Challenge
 
 Una ToDo-List API creada con Django Rest Framework y Python. Es capaz de:
 
@@ -45,7 +45,7 @@ Para instalar el proyecto puede instalarlo desde la fuente o también puede usar
 Clone el repositorio y acceda a la carpeta recién creada
 
 ```bash
-  git clone git@github.com:IgnacioRamos1/todo-challenge-invera.git
+  git clone git@github.com:IgnacioRamos1/todo_list_api_challenge.git
   cd my-project
 ```
 
@@ -61,7 +61,7 @@ Finalmente levante la imagen de Docker:
 Clone el repositorio y acceda a la carpeta recién creada
 
 ```bash
-  git clone git@github.com:IgnacioRamos1/todo-challenge-invera.git
+  git clone git@github.com:IgnacioRamos1/todo_list_api_challenge.git
   cd my-project
 ```
 
